@@ -604,7 +604,7 @@ class ThreadLocalRegistryImpl {
     static ::std::map<DWORD, WatcherThreadParamsPtr_t> MapWatcherThreadParams;
     MapWatcherThreadParams[thread_id] = ::std::make_shared<WatcherThreadParams>();
 
-    auto * watcher_thread_params = MapWatcherThreadParams[thread_id]->get();
+    auto * watcher_thread_params = MapWatcherThreadParams[thread_id].get();
     watcher_thread_params->thread_id = thread_id;
     watcher_thread_params->handle = thread;
 
