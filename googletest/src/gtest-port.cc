@@ -600,7 +600,11 @@ class ThreadLocalRegistryImpl {
         ::OpenThread(SYNCHRONIZE | THREAD_QUERY_INFORMATION, FALSE, thread_id);
     GTEST_CHECK_(thread != nullptr);
 
-    WatcherThreadParams* watcher_thread_params = new WatcherThreadParams;
+    using WatcherThreadParamsPtr_t = ::std::shared_ptr<WatcherThreadParams>;
+    static ::std::map<DWORD, WatcherThreadParamsPtr_t> MapWatcherThreadParams;
+    MapWatcherThreadParams[thread_id] = ::std::make_shared<WatcherThreadParams>();
+
+    auto * watcher_thread_params = MapWatcherThreadParams[thread_id]->get();
     watcher_thread_params->thread_id = thread_id;
     watcher_thread_params->handle = thread;
 
@@ -647,10 +651,11 @@ class ThreadLocalRegistryImpl {
   static ThreadIdToThreadLocals* GetThreadLocalsMapLocked() {
     mutex_.AssertHeld();
 #ifdef _MSC_VER
-    MemoryIsNotDeallocated memory_is_not_deallocated;
+    //MemoryIsNotDeallocated memory_is_not_deallocated;
 #endif  // _MSC_VER
-    static ThreadIdToThreadLocals* map = new ThreadIdToThreadLocals();
-    return map;
+
+    static auto map = ::std::make_shared<ThreadIdToThreadLocals>();
+    return map.get();
   }
 
   // Protects access to GetThreadLocalsMapLocked() and its return value.
