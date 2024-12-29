@@ -550,8 +550,8 @@ MockObjectRegistry g_mock_object_registry;
 // uninteresting method is called.  Protected by g_gmock_mutex.
 std::unordered_map<uintptr_t, internal::CallReaction>&
 UninterestingCallReactionMap() {
-  static auto* map = new std::unordered_map<uintptr_t, internal::CallReaction>;
-  return *map;
+  static std::unordered_map<uintptr_t, internal::CallReaction> map;
+  return map;
 }
 
 // Sets the reaction Google Mock should have when an uninteresting
@@ -769,7 +769,7 @@ void Sequence::AddExpectation(const Expectation& expectation) const {
 // Creates the implicit sequence if there isn't one.
 InSequence::InSequence() {
   if (internal::g_gmock_implicit_sequence.get() == nullptr) {
-    internal::g_gmock_implicit_sequence.set(new Sequence);
+    internal::g_gmock_implicit_sequence.set(DBG_NEW Sequence);
     sequence_created_ = true;
   } else {
     sequence_created_ = false;

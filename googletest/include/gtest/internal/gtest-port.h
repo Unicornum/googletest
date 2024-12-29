@@ -1604,7 +1604,7 @@ class ThreadLocal : public ThreadLocalBase {
   explicit ThreadLocal(const T& value)
       : default_factory_(new InstanceValueHolderFactory(value)) {}
 
-  ~ThreadLocal() override { ThreadLocalRegistry::OnThreadLocalDestroyed(this); }
+  //~ThreadLocal() override { ThreadLocalRegistry::OnThreadLocalDestroyed(this); }
 
   T* pointer() { return GetOrCreateValue(); }
   const T* pointer() const { return GetOrCreateValue(); }
